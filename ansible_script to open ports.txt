@@ -1,0 +1,22 @@
+---
+- name: Configure firewall ports
+  become: yes
+  hosts: all
+  tasks:
+    - name: Copy XML service file
+      copy:
+        src: "{{ playbook_dir }}/files/my-service.xml"
+        dest: "/etc/firewalld/services/my-service.xml"
+    - name: Reload firewall
+      service:
+        name: firewalld
+        state: reloaded
+    - name: Enable and start firewall
+      service:
+        name: firewalld
+        state: started
+    - name: Open ports defined in the service file
+      firewalld:
+        service: "my-service"
+        permanent: yes
+        state: enabled
